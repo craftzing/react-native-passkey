@@ -54,6 +54,33 @@ class PasskeyModule(reactContext: ReactApplicationContext) : ReactContextBaseJav
     }
   }
 
+  private fun handleRegistrationException(e: CreateCredentialException): String {
+    e.printStackTrace()
+    when (e) {
+      is CreatePublicKeyCredentialDomException -> {
+        return e.errorMessage.toString()
+      }
+      is CreateCredentialCancellationException -> {
+        return "UserCancelled"
+      }
+      is CreateCredentialInterruptedException -> {
+        return "Interrupted"
+      }
+      is CreateCredentialProviderConfigurationException -> {
+        return "NotConfigured"
+      }
+      is CreateCredentialUnknownException -> {
+        return "UnknownError"
+      }
+      is CreateCredentialUnsupportedException -> {
+        return "NotSupported"
+      }
+      else -> {
+        return e.errorMessage.toString()
+      }
+    }
+  }
+
   @ReactMethod
   fun get(requestJson: String, forcePlatformKey: Boolean, forceSecurityKey: Boolean, promise: Promise) {
     val credentialManager = CredentialManager.create(reactApplicationContext.applicationContext)
@@ -88,32 +115,6 @@ class PasskeyModule(reactContext: ReactApplicationContext) : ReactContextBaseJav
     return json.toString()
   }
 
-  private fun handleRegistrationException(e: CreateCredentialException): String {
-    e.printStackTrace()
-    when (e) {
-      is CreatePublicKeyCredentialDomException -> {
-        return e.errorMessage.toString()
-      }
-      is CreateCredentialCancellationException -> {
-        return "UserCancelled"
-      }
-      is CreateCredentialInterruptedException -> {
-        return "Interrupted"
-      }
-      is CreateCredentialProviderConfigurationException -> {
-        return "NotConfigured"
-      }
-      is CreateCredentialUnknownException -> {
-        return "UnknownError"
-      }
-      is CreateCredentialUnsupportedException -> {
-        return "NotSupported"
-      }
-      else -> {
-        return e.errorMessage.toString()
-      }
-    }
-  }
 
   private fun handleAuthenticationException(e: GetCredentialException): String {
     e.printStackTrace()
