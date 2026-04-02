@@ -184,16 +184,6 @@ const result = await Passkey.get(requestJson, {
 });
 ```
 
-#### `isConditional` (create only)
-
-When `true`, creates a passkey silently in the background during a password autofill flow, without showing the bottom sheet UI.
-
-```ts
-const result = await Passkey.create(requestJson, {
-  isConditional: true,
-});
-```
-
 #### `prepareGet()` (Android 14+ only)
 
 Pre-fetches credential data before the user triggers sign-in to reduce UI latency. Call this early (e.g. on screen load), then call `get()` as normal when the user taps the sign-in button. Has no effect on iOS or Android below API level 34.

@@ -37,7 +37,6 @@ export class Passkey {
         forceSecurityKey: false,
         preferImmediatelyAvailableCredentials:
           options?.preferImmediatelyAvailableCredentials ?? false,
-        isConditional: options?.isConditional ?? false,
       });
 
       if (typeof response === 'string') {
@@ -72,7 +71,6 @@ export class Passkey {
         forceSecurityKey: false,
         preferImmediatelyAvailableCredentials:
           options?.preferImmediatelyAvailableCredentials ?? false,
-        isConditional: options?.isConditional ?? false,
       });
 
       if (typeof response === 'string') {
@@ -107,7 +105,6 @@ export class Passkey {
         forceSecurityKey: true,
         preferImmediatelyAvailableCredentials:
           options?.preferImmediatelyAvailableCredentials ?? false,
-        isConditional: options?.isConditional ?? false,
       });
 
       if (typeof response === 'string') {

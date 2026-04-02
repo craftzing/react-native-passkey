@@ -33,7 +33,6 @@ class PasskeyModule(reactContext: ReactApplicationContext) : ReactContextBaseJav
   @ReactMethod
   fun create(requestJson: String, options: ReadableMap, promise: Promise) {
     val preferImmediatelyAvailable = options.getBoolean("preferImmediatelyAvailableCredentials")
-    val isConditional = options.getBoolean("isConditional")
     val forcePlatformKey = options.getBoolean("forcePlatformKey")
     val forceSecurityKey = options.getBoolean("forceSecurityKey")
 
@@ -42,8 +41,11 @@ class PasskeyModule(reactContext: ReactApplicationContext) : ReactContextBaseJav
     val credentialManager = CredentialManager.create(reactApplicationContext.applicationContext)
     val createPublicKeyCredentialRequest = CreatePublicKeyCredentialRequest(
       requestJson = adjustedJson,
+      clientDataHash = null,
       preferImmediatelyAvailableCredentials = preferImmediatelyAvailable,
-      isConditional = isConditional
+      isAutoSelectAllowed = false,
+      origin = null,
+      preferDefaultProvider = null
     )
 
     mainScope.launch {
@@ -72,11 +74,14 @@ class PasskeyModule(reactContext: ReactApplicationContext) : ReactContextBaseJav
 
     mainScope.launch {
       try {
-        val storedPreparedResponse = preparedGetResponse
-        val result = if (storedPreparedResponse != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-          preparedGetResponse = null
+        val pendingHandle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+          preparedGetResponse?.pendingGetCredentialHandle.also { preparedGetResponse = null }
+        } else {
+          null
+        }
+        val result = if (pendingHandle != null) {
           reactApplicationContext.currentActivity?.let {
-            credentialManager.getCredential(it, getCredentialRequest, storedPreparedResponse)
+            credentialManager.getCredential(it, pendingHandle)
           }
         } else {
           reactApplicationContext.currentActivity?.let {

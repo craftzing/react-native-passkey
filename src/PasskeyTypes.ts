@@ -120,8 +120,6 @@ export interface PasskeyGetResult {
 export interface PasskeyCreateOptions {
   /** Android only: if true, returns immediately without UI when no local credential is available */
   preferImmediatelyAvailableCredentials?: boolean;
-  /** Android only: creates passkey silently during a password autofill flow, without showing the bottom sheet */
-  isConditional?: boolean;
 }
 
 export interface PasskeyGetOptions {
