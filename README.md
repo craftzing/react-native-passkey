@@ -155,9 +155,11 @@ try {
 
 ### Force Platform or Security Key
 
-You can force users to register and authenticate using either a platform key or a security key (like [Yubikey](https://www.yubico.com/)), or allow both. This works on both iOS and Android.
+You can force users to register and authenticate using either a platform key or a security key (like [Yubikey](https://www.yubico.com/)), or allow both.
 
 #### Create Passkey
+
+Works on both iOS and Android.
 
 - `Passkey.create()` - Allow the user to choose between platform and security passkey
 - `Passkey.createPlatformKey()` - Force the user to create a platform passkey
@@ -168,6 +170,8 @@ You can force users to register and authenticate using either a platform key or 
 - `Passkey.get()` - Allow the user to choose between platform and security passkey
 - `Passkey.getPlatformKey()` - Force the user to authenticate using a platform passkey
 - `Passkey.getSecurityKey()` - Force the user to authenticate using a security passkey
+
+> **Note:** On Android, forcing platform or security key has no effect during authentication. The WebAuthn spec does not support `authenticatorAttachment` for assertion requests — Credential Manager selects credentials based on what is already registered. iOS handles this at the native request level and is unaffected.
 
 ### Extensions
 
