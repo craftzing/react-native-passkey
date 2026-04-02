@@ -4,13 +4,11 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.Promise
-import com.facebook.react.bridge.ReadableMap
 
 import androidx.credentials.CredentialManager
 import androidx.credentials.CreatePublicKeyCredentialRequest
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.GetPublicKeyCredentialOption
-import androidx.credentials.PrepareGetCredentialResponse
 import androidx.credentials.exceptions.*
 import androidx.credentials.exceptions.publickeycredential.CreatePublicKeyCredentialDomException
 import androidx.credentials.exceptions.publickeycredential.GetPublicKeyCredentialDomException
@@ -19,30 +17,24 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-import android.os.Build
 import org.json.JSONObject
 
 class PasskeyModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
   private val mainScope = CoroutineScope(Dispatchers.Default)
-  private var preparedGetResponse: PrepareGetCredentialResponse? = null
 
   override fun getName(): String {
     return "Passkey"
   }
 
   @ReactMethod
-  fun create(requestJson: String, options: ReadableMap, promise: Promise) {
-    val preferImmediatelyAvailable = options.getBoolean("preferImmediatelyAvailableCredentials")
-    val forcePlatformKey = options.getBoolean("forcePlatformKey")
-    val forceSecurityKey = options.getBoolean("forceSecurityKey")
-
+  fun create(requestJson: String, forcePlatformKey: Boolean, forceSecurityKey: Boolean, promise: Promise) {
     val adjustedJson = adjustAuthenticatorAttachment(requestJson, forcePlatformKey, forceSecurityKey)
 
     val credentialManager = CredentialManager.create(reactApplicationContext.applicationContext)
     val createPublicKeyCredentialRequest = CreatePublicKeyCredentialRequest(
       requestJson = adjustedJson,
       clientDataHash = null,
-      preferImmediatelyAvailableCredentials = preferImmediatelyAvailable,
+      preferImmediatelyAvailableCredentials = false,
       isAutoSelectAllowed = false,
       origin = null,
       preferDefaultProvider = null
@@ -63,56 +55,19 @@ class PasskeyModule(reactContext: ReactApplicationContext) : ReactContextBaseJav
   }
 
   @ReactMethod
-  fun get(requestJson: String, options: ReadableMap, promise: Promise) {
-    val preferImmediatelyAvailable = options.getBoolean("preferImmediatelyAvailableCredentials")
-
+  fun get(requestJson: String, forcePlatformKey: Boolean, forceSecurityKey: Boolean, promise: Promise) {
     val credentialManager = CredentialManager.create(reactApplicationContext.applicationContext)
-    val getCredentialRequest = GetCredentialRequest(
-      credentialOptions = listOf(GetPublicKeyCredentialOption(requestJson)),
-      preferImmediatelyAvailableCredentials = preferImmediatelyAvailable
-    )
+    val getCredentialRequest =
+      GetCredentialRequest(listOf(GetPublicKeyCredentialOption(requestJson)))
 
     mainScope.launch {
       try {
-        val pendingHandle = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-          preparedGetResponse?.pendingGetCredentialHandle.also { preparedGetResponse = null }
-        } else {
-          null
-        }
-        val result = if (pendingHandle != null) {
-          reactApplicationContext.currentActivity?.let {
-            credentialManager.getCredential(it, pendingHandle)
-          }
-        } else {
-          reactApplicationContext.currentActivity?.let {
-            credentialManager.getCredential(it, getCredentialRequest)
-          }
-        }
+        val result =
+          reactApplicationContext.currentActivity?.let { credentialManager.getCredential(it, getCredentialRequest) }
 
         val response =
           result?.credential?.data?.getString("androidx.credentials.BUNDLE_KEY_AUTHENTICATION_RESPONSE_JSON")
         promise.resolve(response)
-      } catch (e: GetCredentialException) {
-        val errorCode = handleAuthenticationException(e)
-        promise.reject(errorCode, errorCode)
-      }
-    }
-  }
-
-  @ReactMethod
-  fun prepareGet(requestJson: String, promise: Promise) {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-      promise.resolve(null)
-      return
-    }
-
-    val credentialManager = CredentialManager.create(reactApplicationContext.applicationContext)
-    val getCredentialRequest = GetCredentialRequest(listOf(GetPublicKeyCredentialOption(requestJson)))
-
-    mainScope.launch {
-      try {
-        preparedGetResponse = credentialManager.prepareGetCredential(getCredentialRequest)
-        promise.resolve(null)
       } catch (e: GetCredentialException) {
         val errorCode = handleAuthenticationException(e)
         promise.reject(errorCode, errorCode)

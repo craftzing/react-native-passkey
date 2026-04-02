@@ -117,16 +117,6 @@ export interface PasskeyGetResult {
   };
 }
 
-export interface PasskeyCreateOptions {
-  /** Android only: if true, returns immediately without UI when no local credential is available */
-  preferImmediatelyAvailableCredentials?: boolean;
-}
-
-export interface PasskeyGetOptions {
-  /** Android only: if true, returns immediately without UI when no local credential is available */
-  preferImmediatelyAvailableCredentials?: boolean;
-}
-
 // https://www.w3.org/TR/webauthn-3/#dictionary-credential-descriptor
 export interface PublicKeyCredentialDescriptor {
   type: 'public-key';

@@ -169,33 +169,6 @@ You can force users to register and authenticate using either a platform key or 
 - `Passkey.getPlatformKey()` - Force the user to authenticate using a platform passkey
 - `Passkey.getSecurityKey()` - Force the user to authenticate using a security passkey
 
-### Android-specific Options
-
-The `create()`, `createPlatformKey()`, `createSecurityKey()`, `get()`, `getPlatformKey()` and `getSecurityKey()` methods accept an optional second argument with Android-specific options.
-
-#### `preferImmediatelyAvailableCredentials`
-
-When `true`, the call returns immediately without showing any UI if no locally available credential is found, instead of falling back to cross-device flows. Useful for silent sign-in checks at app startup.
-
-```ts
-// Returns NoCredentials error immediately instead of showing the bottom sheet
-const result = await Passkey.get(requestJson, {
-  preferImmediatelyAvailableCredentials: true,
-});
-```
-
-#### `prepareGet()` (Android 14+ only)
-
-Pre-fetches credential data before the user triggers sign-in to reduce UI latency. Call this early (e.g. on screen load), then call `get()` as normal when the user taps the sign-in button. Has no effect on iOS or Android below API level 34.
-
-```ts
-// On screen load
-await Passkey.prepareGet(requestJson);
-
-// On sign-in button press
-const result = await Passkey.get(requestJson);
-```
-
 ### Extensions
 
 #### largeBlob
