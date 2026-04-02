@@ -153,9 +153,9 @@ try {
 }
 ```
 
-### Force Platform or Security Key (iOS-specific)
+### Force Platform or Security Key
 
-You can force users to register and authenticate using either a platform key, a security key (like [Yubikey](https://www.yubico.com/)) or allow both using the following methods. This only works on iOS, Android will ignore these instructions.
+You can force users to register and authenticate using either a platform key or a security key (like [Yubikey](https://www.yubico.com/)), or allow both. This works on both iOS and Android.
 
 #### Create Passkey
 
@@ -168,6 +168,43 @@ You can force users to register and authenticate using either a platform key, a 
 - `Passkey.get()` - Allow the user to choose between platform and security passkey
 - `Passkey.getPlatformKey()` - Force the user to authenticate using a platform passkey
 - `Passkey.getSecurityKey()` - Force the user to authenticate using a security passkey
+
+### Android-specific Options
+
+The `create()`, `createPlatformKey()`, `createSecurityKey()`, `get()`, `getPlatformKey()` and `getSecurityKey()` methods accept an optional second argument with Android-specific options.
+
+#### `preferImmediatelyAvailableCredentials`
+
+When `true`, the call returns immediately without showing any UI if no locally available credential is found, instead of falling back to cross-device flows. Useful for silent sign-in checks at app startup.
+
+```ts
+// Returns NoCredentials error immediately instead of showing the bottom sheet
+const result = await Passkey.get(requestJson, {
+  preferImmediatelyAvailableCredentials: true,
+});
+```
+
+#### `isConditional` (create only)
+
+When `true`, creates a passkey silently in the background during a password autofill flow, without showing the bottom sheet UI.
+
+```ts
+const result = await Passkey.create(requestJson, {
+  isConditional: true,
+});
+```
+
+#### `prepareGet()` (Android 14+ only)
+
+Pre-fetches credential data before the user triggers sign-in to reduce UI latency. Call this early (e.g. on screen load), then call `get()` as normal when the user taps the sign-in button. Has no effect on iOS or Android below API level 34.
+
+```ts
+// On screen load
+await Passkey.prepareGet(requestJson);
+
+// On sign-in button press
+const result = await Passkey.get(requestJson);
+```
 
 ### Extensions
 
