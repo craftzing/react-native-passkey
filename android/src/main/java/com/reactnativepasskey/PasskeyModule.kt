@@ -17,8 +17,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-import org.json.JSONObject
-
 class PasskeyModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
   private val mainScope = CoroutineScope(Dispatchers.Default)
 
@@ -28,17 +26,8 @@ class PasskeyModule(reactContext: ReactApplicationContext) : ReactContextBaseJav
 
   @ReactMethod
   fun create(requestJson: String, forcePlatformKey: Boolean, forceSecurityKey: Boolean, promise: Promise) {
-    val adjustedJson = adjustAuthenticatorAttachment(requestJson, forcePlatformKey, forceSecurityKey)
-
     val credentialManager = CredentialManager.create(reactApplicationContext.applicationContext)
-    val createPublicKeyCredentialRequest = CreatePublicKeyCredentialRequest(
-      requestJson = adjustedJson,
-      clientDataHash = null,
-      preferImmediatelyAvailableCredentials = false,
-      isAutoSelectAllowed = false,
-      origin = null,
-      preferDefaultProvider = null
-    )
+    val createPublicKeyCredentialRequest = CreatePublicKeyCredentialRequest(requestJson)
 
     mainScope.launch {
       try {
@@ -83,38 +72,24 @@ class PasskeyModule(reactContext: ReactApplicationContext) : ReactContextBaseJav
 
   @ReactMethod
   fun get(requestJson: String, forcePlatformKey: Boolean, forceSecurityKey: Boolean, promise: Promise) {
-    val credentialManager = CredentialManager.create(reactApplicationContext.applicationContext)
-    val getCredentialRequest =
-      GetCredentialRequest(listOf(GetPublicKeyCredentialOption(requestJson)))
+      val credentialManager = CredentialManager.create(reactApplicationContext.applicationContext)
+      val getCredentialRequest =
+        GetCredentialRequest(listOf(GetPublicKeyCredentialOption(requestJson)))
 
-    mainScope.launch {
-      try {
-        val result =
-          reactApplicationContext.currentActivity?.let { credentialManager.getCredential(it, getCredentialRequest) }
+      mainScope.launch {
+        try {
+          val result =
+            reactApplicationContext.currentActivity?.let { credentialManager.getCredential(it, getCredentialRequest) }
 
-        val response =
-          result?.credential?.data?.getString("androidx.credentials.BUNDLE_KEY_AUTHENTICATION_RESPONSE_JSON")
-        promise.resolve(response)
-      } catch (e: GetCredentialException) {
-        val errorCode = handleAuthenticationException(e)
-        promise.reject(errorCode, errorCode)
+          val response =
+            result?.credential?.data?.getString("androidx.credentials.BUNDLE_KEY_AUTHENTICATION_RESPONSE_JSON")
+          promise.resolve(response)
+        } catch (e: GetCredentialException) {
+          val errorCode = handleAuthenticationException(e)
+          promise.reject(errorCode, errorCode)
+        }
       }
-    }
   }
-
-  private fun adjustAuthenticatorAttachment(
-    requestJson: String,
-    forcePlatformKey: Boolean,
-    forceSecurityKey: Boolean
-  ): String {
-    if (!forcePlatformKey && !forceSecurityKey) return requestJson
-    val json = JSONObject(requestJson)
-    val authSelection = json.optJSONObject("authenticatorSelection") ?: JSONObject()
-    authSelection.put("authenticatorAttachment", if (forcePlatformKey) "platform" else "cross-platform")
-    json.put("authenticatorSelection", authSelection)
-    return json.toString()
-  }
-
 
   private fun handleAuthenticationException(e: GetCredentialException): String {
     e.printStackTrace()

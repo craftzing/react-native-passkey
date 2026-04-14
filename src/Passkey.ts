@@ -45,7 +45,7 @@ export class Passkey {
 
   /**
    * Creates a new Passkey
-   * Forces the usage of a platform authenticator on iOS and Android
+   * Forces the usage of a platform authenticator on iOS
    *
    * @param request The FIDO2 Attestation Request in JSON format
    * @returns The FIDO2 Attestation Result in JSON format
@@ -76,7 +76,7 @@ export class Passkey {
 
   /**
    * Creates a new Passkey
-   * Forces the usage of a security authenticator on iOS and Android
+   * Forces the usage of a security authenticator on iOS
    *
    * @param request The FIDO2 Attestation Request in JSON format
    * @returns The FIDO2 Attestation Result in JSON format
@@ -137,7 +137,7 @@ export class Passkey {
 
   /**
    * Authenticates using an existing Passkey
-   * Forces the usage of a platform authenticator on iOS and Android
+   * Forces the usage of a platform authenticator on iOS
    *
    * @param request The FIDO2 Assertion Request in JSON format
    * @returns The FIDO2 Assertion Result in JSON format
@@ -168,7 +168,7 @@ export class Passkey {
 
   /**
    * Authenticates using an existing Passkey
-   * Forces the usage of a security authenticator on iOS and Android
+   * Forces the usage of a security authenticator on iOS
    *
    * @param request The FIDO2 Assertion Request in JSON format
    * @returns The FIDO2 Assertion Result in JSON format
