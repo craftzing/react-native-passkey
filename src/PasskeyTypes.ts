@@ -147,7 +147,7 @@ export interface AuthenticationExtensionsPRFValues {
   second?: PasskeyBinaryValue;
 }
 
-export interface Android15CustomizationOptions {
+export interface BaseAndroid15CustomizationOptions {
   autoSelectAllowed?: boolean;
   preferImmediatelyAvailable?: boolean;
   themeVariant?: 'system' | 'light' | 'dark';
@@ -155,10 +155,20 @@ export interface Android15CustomizationOptions {
     title?: string;
     subtitle?: string;
   };
-  origin?: string;
+}
+
+export interface Android15CreateCustomizationOptions
+  extends BaseAndroid15CustomizationOptions {
   isConditional?: boolean;
 }
 
-export interface PasskeyOptions {
-  androidOptions?: Android15CustomizationOptions;
+export interface PasskeyCreateOptions {
+  androidOptions?: Android15CreateCustomizationOptions;
+}
+
+export interface Android15GetCustomizationOptions
+  extends BaseAndroid15CustomizationOptions {}
+
+export interface PasskeyGetOptions {
+  androidOptions?: Android15GetCustomizationOptions;
 }

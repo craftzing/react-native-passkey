@@ -38,7 +38,7 @@ class PasskeyModule(reactContext: ReactApplicationContext) : ReactContextBaseJav
         requestJson = requestJson,
         clientDataHash = null,
         preferImmediatelyAvailableCredentials = parsedOptions.preferImmediatelyAvailable,
-        origin = parsedOptions.origin,
+        origin = null,
         isAutoSelectAllowed = parsedOptions.autoSelectAllowed,
         isConditional = parsedOptions.isConditional
       )
@@ -108,9 +108,7 @@ class PasskeyModule(reactContext: ReactApplicationContext) : ReactContextBaseJav
         .addCredentialOption(getPublicKeyCredentialOption)
         .setPreferImmediatelyAvailableCredentials(finalPreferImmediatelyAvailable)
 
-      if (Build.VERSION.SDK_INT >= 35 && parsedOptions.origin != null) {
-        getCredentialRequestBuilder.setOrigin(parsedOptions.origin!!)
-      }
+
 
       val getCredentialRequest = getCredentialRequestBuilder.build()
 
@@ -186,9 +184,6 @@ class PasskeyModule(reactContext: ReactApplicationContext) : ReactContextBaseJav
     if (options.hasKey("preferImmediatelyAvailable")) {
       result.preferImmediatelyAvailable = options.getBoolean("preferImmediatelyAvailable")
     }
-    if (options.hasKey("origin")) {
-      result.origin = options.getString("origin")
-    }
     if (options.hasKey("isConditional")) {
       result.isConditional = options.getBoolean("isConditional")
     }
@@ -198,7 +193,6 @@ class PasskeyModule(reactContext: ReactApplicationContext) : ReactContextBaseJav
   class CustomizationOptions {
     var autoSelectAllowed: Boolean = false
     var preferImmediatelyAvailable: Boolean = false
-    var origin: String? = null
     var isConditional: Boolean = false
   }
 }

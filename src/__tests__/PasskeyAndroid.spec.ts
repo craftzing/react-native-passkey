@@ -106,7 +106,6 @@ describe('Test Passkey Module', () => {
       androidOptions: {
         autoSelectAllowed: true,
         preferImmediatelyAvailable: true,
-        origin: 'https://example.com',
       },
     };
 
@@ -128,7 +127,6 @@ describe('Test Passkey Module', () => {
       androidOptions: {
         autoSelectAllowed: true,
         preferImmediatelyAvailable: true,
-        origin: 'https://example.com',
       },
     };
 

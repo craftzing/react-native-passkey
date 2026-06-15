@@ -9,7 +9,8 @@ import type {
   PasskeyCreateResult,
   PasskeyGetRequest,
   PasskeyGetResult,
-  PasskeyOptions,
+  PasskeyCreateOptions,
+  PasskeyGetOptions,
 } from './PasskeyTypes';
 import { stringifyPasskeyRequest } from './PasskeyRequest';
 import { NativePasskey } from './NativePasskey';
@@ -25,7 +26,7 @@ export class Passkey {
    */
   public static async create(
     request: PasskeyCreateRequest,
-    options?: PasskeyOptions
+    options?: PasskeyCreateOptions
   ): Promise<PasskeyCreateResult> {
     if (!Passkey.isSupported()) {
       throw NotSupportedError;
@@ -59,7 +60,7 @@ export class Passkey {
    */
   public static async createPlatformKey(
     request: PasskeyCreateRequest,
-    options?: PasskeyOptions
+    options?: PasskeyCreateOptions
   ): Promise<PasskeyCreateResult> {
     if (!Passkey.isSupported()) {
       throw NotSupportedError;
@@ -93,7 +94,7 @@ export class Passkey {
    */
   public static async createSecurityKey(
     request: PasskeyCreateRequest,
-    options?: PasskeyOptions
+    options?: PasskeyCreateOptions
   ): Promise<PasskeyCreateResult> {
     if (!Passkey.isSupported()) {
       throw NotSupportedError;
@@ -126,7 +127,7 @@ export class Passkey {
    */
   public static async get(
     request: PasskeyGetRequest,
-    options?: PasskeyOptions
+    options?: PasskeyGetOptions
   ): Promise<PasskeyGetResult> {
     if (!Passkey.isSupported()) {
       throw NotSupportedError;
@@ -165,7 +166,7 @@ export class Passkey {
    */
   public static async getImmediate(
     request: PasskeyGetRequest,
-    options?: PasskeyOptions
+    options?: PasskeyGetOptions
   ): Promise<PasskeyGetResult> {
     if (!Passkey.isSupported()) {
       throw NotSupportedError;
@@ -200,7 +201,7 @@ export class Passkey {
    */
   public static async getPlatformKey(
     request: PasskeyGetRequest,
-    options?: PasskeyOptions
+    options?: PasskeyGetOptions
   ): Promise<PasskeyGetResult> {
     if (!Passkey.isSupported()) {
       throw NotSupportedError;
@@ -235,7 +236,7 @@ export class Passkey {
    */
   public static async getSecurityKey(
     request: PasskeyGetRequest,
-    options?: PasskeyOptions
+    options?: PasskeyGetOptions
   ): Promise<PasskeyGetResult> {
     if (!Passkey.isSupported()) {
       throw NotSupportedError;
