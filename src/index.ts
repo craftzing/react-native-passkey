@@ -5,6 +5,8 @@ import type {
   PasskeyCreateResult,
   PasskeyGetRequest,
   PasskeyGetResult,
+  Android15CustomizationOptions,
+  PasskeyOptions,
 } from './PasskeyTypes';
 
 export {
@@ -14,4 +16,6 @@ export {
   PasskeyCreateResult,
   PasskeyGetRequest,
   PasskeyGetResult,
+  Android15CustomizationOptions,
+  PasskeyOptions,
 };

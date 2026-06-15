@@ -146,3 +146,18 @@ export interface AuthenticationExtensionsPRFValues {
   first: PasskeyBinaryValue;
   second?: PasskeyBinaryValue;
 }
+
+export interface Android15CustomizationOptions {
+  autoSelectAllowed?: boolean;
+  preferImmediatelyAvailable?: boolean;
+  themeVariant?: 'system' | 'light' | 'dark';
+  displayHint?: {
+    title?: string;
+    subtitle?: string;
+  };
+  origin?: string;
+}
+
+export interface PasskeyOptions {
+  androidOptions?: Android15CustomizationOptions;
+}
