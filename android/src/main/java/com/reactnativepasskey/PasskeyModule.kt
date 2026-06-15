@@ -39,7 +39,8 @@ class PasskeyModule(reactContext: ReactApplicationContext) : ReactContextBaseJav
         clientDataHash = null,
         preferImmediatelyAvailableCredentials = parsedOptions.preferImmediatelyAvailable,
         origin = parsedOptions.origin,
-        isAutoSelectAllowed = parsedOptions.autoSelectAllowed
+        isAutoSelectAllowed = parsedOptions.autoSelectAllowed,
+        isConditional = parsedOptions.isConditional
       )
     } else {
       CreatePublicKeyCredentialRequest(requestJson)
@@ -188,6 +189,9 @@ class PasskeyModule(reactContext: ReactApplicationContext) : ReactContextBaseJav
     if (options.hasKey("origin")) {
       result.origin = options.getString("origin")
     }
+    if (options.hasKey("isConditional")) {
+      result.isConditional = options.getBoolean("isConditional")
+    }
     return result
   }
 
@@ -195,5 +199,6 @@ class PasskeyModule(reactContext: ReactApplicationContext) : ReactContextBaseJav
     var autoSelectAllowed: Boolean = false
     var preferImmediatelyAvailable: Boolean = false
     var origin: String? = null
+    var isConditional: Boolean = false
   }
 }

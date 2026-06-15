@@ -156,6 +156,7 @@ export interface Android15CustomizationOptions {
     subtitle?: string;
   };
   origin?: string;
+  isConditional?: boolean;
 }
 
 export interface PasskeyOptions {
