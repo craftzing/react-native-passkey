@@ -18,7 +18,6 @@ export class Passkey {
    * Creates a new Passkey
    *
    * @param request The FIDO2 Attestation Request in JSON format
-   * @param options An object containing options for the registration process
    * @returns The FIDO2 Attestation Result in JSON format
    * @throws
    */
@@ -50,7 +49,6 @@ export class Passkey {
    * Forces the usage of a platform authenticator on iOS
    *
    * @param request The FIDO2 Attestation Request in JSON format
-   * @param options An object containing options for the registration process
    * @returns The FIDO2 Attestation Result in JSON format
    * @throws
    */
@@ -82,7 +80,6 @@ export class Passkey {
    * Forces the usage of a security authenticator on iOS
    *
    * @param request The FIDO2 Attestation Request in JSON format
-   * @param options An object containing options for the registration process
    * @returns The FIDO2 Attestation Result in JSON format
    * @throws
    */
@@ -113,7 +110,6 @@ export class Passkey {
    * Authenticates using an existing Passkey
    *
    * @param request The FIDO2 Assertion Request in JSON format
-   * @param options An object containing options for the authentication process
    * @returns The FIDO2 Assertion Result in JSON format
    * @throws
    */
@@ -183,7 +179,6 @@ export class Passkey {
    * Forces the usage of a platform authenticator on iOS
    *
    * @param request The FIDO2 Assertion Request in JSON format
-   * @param options An object containing options for the authentication process
    * @returns The FIDO2 Assertion Result in JSON format
    * @throws
    */
@@ -216,7 +211,6 @@ export class Passkey {
    * Forces the usage of a security authenticator on iOS
    *
    * @param request The FIDO2 Assertion Request in JSON format
-   * @param options An object containing options for the authentication process
    * @returns The FIDO2 Assertion Result in JSON format
    * @throws
    */
