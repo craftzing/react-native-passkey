@@ -146,3 +146,50 @@ export interface AuthenticationExtensionsPRFValues {
   first: PasskeyBinaryValue;
   second?: PasskeyBinaryValue;
 }
+
+export interface BaseAndroid15CustomizationOptions {
+  /**
+   * If true, allows the system to automatically select a credential without
+   * prompting the user with a dialog, provided there is exactly one matching credential.
+   */
+  autoSelectAllowed?: boolean;
+  /**
+   * If true, specifies a preference for credentials that are immediately available on the device
+   * (e.g. local biometrics) rather than initiating a flow that requires external devices
+   * (like security keys or another phone via QR code).
+   *
+   * If no local credentials are immediately available, the operation will fail silently
+   * with a 'NoCredentials' error.
+   */
+  preferImmediatelyAvailable?: boolean;
+  themeVariant?: 'system' | 'light' | 'dark';
+  displayHint?: {
+    title?: string;
+    subtitle?: string;
+  };
+}
+
+export interface Android15CreateCustomizationOptions
+  extends BaseAndroid15CustomizationOptions {
+  /**
+   * If true, enables silent passkey creation (conditional registration). The system
+   * attempts to create the passkey in the background without immediately showing a popup dialog.
+   *
+   * NOTE: This requires that the user already has a saved password credential for the same
+   * account in their password manager (e.g., Google Password Manager). If this condition is not met,
+   * the call will fail with a 'NoCreateOption' error, and the app should fall back to calling
+   * `Passkey.create` with `isConditional: false` (an interactive prompt).
+   */
+  isConditional?: boolean;
+}
+
+export interface PasskeyCreateOptions {
+  androidOptions?: Android15CreateCustomizationOptions;
+}
+
+export interface Android15GetCustomizationOptions
+  extends BaseAndroid15CustomizationOptions {}
+
+export interface PasskeyGetOptions {
+  androidOptions?: Android15GetCustomizationOptions;
+}

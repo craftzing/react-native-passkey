@@ -92,7 +92,51 @@ describe('Test Passkey Module', () => {
       stringifyPasskeyRequest(AuthRequest, 'android'),
       true,
       false,
-      true
+      true,
+      null
+    );
+  });
+
+  test('should call native register method with options', async () => {
+    const registerSpy = jest
+      .spyOn(NativeModules.Passkey, 'create')
+      .mockResolvedValue(JSON.stringify(RegAndroidResult));
+
+    const options = {
+      androidOptions: {
+        autoSelectAllowed: true,
+        preferImmediatelyAvailable: true,
+      },
+    };
+
+    await Passkey.create(RegRequest, options);
+    expect(registerSpy).toHaveBeenCalledWith(
+      stringifyPasskeyRequest(RegRequest, 'android'),
+      false,
+      false,
+      options.androidOptions
+    );
+  });
+
+  test('should call native auth method with options', async () => {
+    const authSpy = jest
+      .spyOn(NativeModules.Passkey, 'get')
+      .mockResolvedValue(JSON.stringify(AuthAndroidResult));
+
+    const options = {
+      androidOptions: {
+        autoSelectAllowed: true,
+        preferImmediatelyAvailable: true,
+      },
+    };
+
+    await Passkey.get(AuthRequest, options);
+    expect(authSpy).toHaveBeenCalledWith(
+      stringifyPasskeyRequest(AuthRequest, 'android'),
+      false,
+      false,
+      false,
+      options.androidOptions
     );
   });
 });

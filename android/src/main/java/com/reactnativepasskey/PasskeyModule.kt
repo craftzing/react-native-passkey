@@ -4,6 +4,8 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.Promise
+import com.facebook.react.bridge.ReadableMap
+import android.os.Build
 
 import androidx.credentials.CredentialManager
 import androidx.credentials.CreatePublicKeyCredentialRequest
@@ -26,9 +28,23 @@ class PasskeyModule(reactContext: ReactApplicationContext) : ReactContextBaseJav
   }
 
   @ReactMethod
-  fun create(requestJson: String, forcePlatformKey: Boolean, forceSecurityKey: Boolean, promise: Promise) {
+  fun create(requestJson: String, forcePlatformKey: Boolean, forceSecurityKey: Boolean, options: ReadableMap?, promise: Promise) {
     val credentialManager = CredentialManager.create(reactApplicationContext.applicationContext)
-    val createPublicKeyCredentialRequest = CreatePublicKeyCredentialRequest(requestJson)
+    
+    val parsedOptions = parseCustomizationOptions(options)
+
+    val createPublicKeyCredentialRequest = if (Build.VERSION.SDK_INT >= 35) {
+      CreatePublicKeyCredentialRequest(
+        requestJson = requestJson,
+        clientDataHash = null,
+        preferImmediatelyAvailableCredentials = parsedOptions.preferImmediatelyAvailable,
+        origin = null,
+        isAutoSelectAllowed = parsedOptions.autoSelectAllowed,
+        isConditional = parsedOptions.isConditional
+      )
+    } else {
+      CreatePublicKeyCredentialRequest(requestJson)
+    }
 
     mainScope.launch {
       try {
@@ -76,13 +92,25 @@ class PasskeyModule(reactContext: ReactApplicationContext) : ReactContextBaseJav
   }
 
   @ReactMethod
-  fun get(requestJson: String, forcePlatformKey: Boolean, forceSecurityKey: Boolean, preferImmediatelyAvailable: Boolean, promise: Promise) {
+  fun get(requestJson: String, forcePlatformKey: Boolean, forceSecurityKey: Boolean, preferImmediatelyAvailable: Boolean, options: ReadableMap?, promise: Promise) {
       val credentialManager = CredentialManager.create(reactApplicationContext.applicationContext)
-      val getCredentialRequest =
-        GetCredentialRequest(
-          listOf(GetPublicKeyCredentialOption(requestJson)),
-          preferImmediatelyAvailableCredentials = preferImmediatelyAvailable
-        )
+      
+      val parsedOptions = parseCustomizationOptions(options)
+      val finalPreferImmediatelyAvailable = preferImmediatelyAvailable || parsedOptions.preferImmediatelyAvailable
+
+      val getPublicKeyCredentialOption = GetPublicKeyCredentialOption(requestJson)
+      if (parsedOptions.autoSelectAllowed) {
+        getPublicKeyCredentialOption.requestData.putBoolean("androidx.credentials.BUNDLE_KEY_IS_AUTO_SELECT_ALLOWED", true)
+        getPublicKeyCredentialOption.candidateQueryData.putBoolean("androidx.credentials.BUNDLE_KEY_IS_AUTO_SELECT_ALLOWED", true)
+      }
+
+      val getCredentialRequestBuilder = GetCredentialRequest.Builder()
+        .addCredentialOption(getPublicKeyCredentialOption)
+        .setPreferImmediatelyAvailableCredentials(finalPreferImmediatelyAvailable)
+
+
+
+      val getCredentialRequest = getCredentialRequestBuilder.build()
 
       mainScope.launch {
         try {
@@ -144,5 +172,27 @@ class PasskeyModule(reactContext: ReactApplicationContext) : ReactContextBaseJav
       is NotSupportedError -> "NotSupported"
       else -> "UnknownError"
     }
+  }
+
+  private fun parseCustomizationOptions(options: ReadableMap?): CustomizationOptions {
+    val result = CustomizationOptions()
+    if (options == null) return result
+
+    if (options.hasKey("autoSelectAllowed")) {
+      result.autoSelectAllowed = options.getBoolean("autoSelectAllowed")
+    }
+    if (options.hasKey("preferImmediatelyAvailable")) {
+      result.preferImmediatelyAvailable = options.getBoolean("preferImmediatelyAvailable")
+    }
+    if (options.hasKey("isConditional")) {
+      result.isConditional = options.getBoolean("isConditional")
+    }
+    return result
+  }
+
+  class CustomizationOptions {
+    var autoSelectAllowed: Boolean = false
+    var preferImmediatelyAvailable: Boolean = false
+    var isConditional: Boolean = false
   }
 }

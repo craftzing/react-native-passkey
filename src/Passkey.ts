@@ -9,6 +9,8 @@ import type {
   PasskeyCreateResult,
   PasskeyGetRequest,
   PasskeyGetResult,
+  PasskeyCreateOptions,
+  PasskeyGetOptions,
 } from './PasskeyTypes';
 import { stringifyPasskeyRequest } from './PasskeyRequest';
 import { NativePasskey } from './NativePasskey';
@@ -23,7 +25,8 @@ export class Passkey {
    * @throws
    */
   public static async create(
-    request: PasskeyCreateRequest
+    request: PasskeyCreateRequest,
+    options?: PasskeyCreateOptions
   ): Promise<PasskeyCreateResult> {
     if (!Passkey.isSupported()) {
       throw NotSupportedError;
@@ -33,7 +36,8 @@ export class Passkey {
       const response = await NativePasskey.create(
         stringifyPasskeyRequest(request, Platform.OS),
         false, // forcePlatformKey
-        false // forceSecurityKey
+        false, // forceSecurityKey
+        options?.androidOptions ?? null
       );
 
       if (typeof response === 'string') {
@@ -55,7 +59,8 @@ export class Passkey {
    * @throws
    */
   public static async createPlatformKey(
-    request: PasskeyCreateRequest
+    request: PasskeyCreateRequest,
+    options?: PasskeyCreateOptions
   ): Promise<PasskeyCreateResult> {
     if (!Passkey.isSupported()) {
       throw NotSupportedError;
@@ -65,7 +70,8 @@ export class Passkey {
       const response = await NativePasskey.create(
         stringifyPasskeyRequest(request, Platform.OS),
         true, // forcePlatformKey
-        false // forceSecurityKey
+        false, // forceSecurityKey
+        options?.androidOptions ?? null
       );
 
       if (typeof response === 'string') {
@@ -87,7 +93,8 @@ export class Passkey {
    * @throws
    */
   public static async createSecurityKey(
-    request: PasskeyCreateRequest
+    request: PasskeyCreateRequest,
+    options?: PasskeyCreateOptions
   ): Promise<PasskeyCreateResult> {
     if (!Passkey.isSupported()) {
       throw NotSupportedError;
@@ -97,7 +104,8 @@ export class Passkey {
       const response = await NativePasskey.create(
         stringifyPasskeyRequest(request, Platform.OS),
         false, // forcePlatformKey
-        true // forceSecurityKey
+        true, // forceSecurityKey
+        options?.androidOptions ?? null
       );
 
       if (typeof response === 'string') {
@@ -118,7 +126,8 @@ export class Passkey {
    * @throws
    */
   public static async get(
-    request: PasskeyGetRequest
+    request: PasskeyGetRequest,
+    options?: PasskeyGetOptions
   ): Promise<PasskeyGetResult> {
     if (!Passkey.isSupported()) {
       throw NotSupportedError;
@@ -129,7 +138,8 @@ export class Passkey {
         stringifyPasskeyRequest(request, Platform.OS),
         false, // forcePlatformKey
         false, // forceSecurityKey
-        false // preferImmediatelyAvailable
+        false, // preferImmediatelyAvailable
+        options?.androidOptions ?? null
       );
 
       if (typeof response === 'string') {
@@ -155,7 +165,8 @@ export class Passkey {
    * @throws
    */
   public static async getImmediate(
-    request: PasskeyGetRequest
+    request: PasskeyGetRequest,
+    options?: PasskeyGetOptions
   ): Promise<PasskeyGetResult> {
     if (!Passkey.isSupported()) {
       throw NotSupportedError;
@@ -166,7 +177,8 @@ export class Passkey {
         stringifyPasskeyRequest(request, Platform.OS),
         true, // forcePlatformKey (immediate is platform-only)
         false, // forceSecurityKey
-        true // preferImmediatelyAvailable
+        true, // preferImmediatelyAvailable
+        options?.androidOptions ?? null
       );
 
       if (typeof response === 'string') {
@@ -188,7 +200,8 @@ export class Passkey {
    * @throws
    */
   public static async getPlatformKey(
-    request: PasskeyGetRequest
+    request: PasskeyGetRequest,
+    options?: PasskeyGetOptions
   ): Promise<PasskeyGetResult> {
     if (!Passkey.isSupported()) {
       throw NotSupportedError;
@@ -199,7 +212,8 @@ export class Passkey {
         stringifyPasskeyRequest(request, Platform.OS),
         true, // forcePlatformKey
         false, // forceSecurityKey
-        false // preferImmediatelyAvailable
+        false, // preferImmediatelyAvailable
+        options?.androidOptions ?? null
       );
 
       if (typeof response === 'string') {
@@ -221,7 +235,8 @@ export class Passkey {
    * @throws
    */
   public static async getSecurityKey(
-    request: PasskeyGetRequest
+    request: PasskeyGetRequest,
+    options?: PasskeyGetOptions
   ): Promise<PasskeyGetResult> {
     if (!Passkey.isSupported()) {
       throw NotSupportedError;
@@ -232,7 +247,8 @@ export class Passkey {
         stringifyPasskeyRequest(request, Platform.OS),
         false, // forcePlatformKey
         true, // forceSecurityKey
-        false // preferImmediatelyAvailable
+        false, // preferImmediatelyAvailable
+        options?.androidOptions ?? null
       );
 
       if (typeof response === 'string') {

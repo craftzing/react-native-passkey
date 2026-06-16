@@ -53,7 +53,8 @@ describe('Test Passkey Module', () => {
       stringifyPasskeyRequest(AuthRequest, 'ios'),
       true,
       false,
-      true
+      true,
+      null
     );
   });
 });
